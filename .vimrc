@@ -1,5 +1,5 @@
-filetype plugin indent on
 syntax on
+filetype plugin indent on
 set encoding=utf-8
 
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -21,10 +21,9 @@ Plugin 'vim-airline/vim-airline-themes'
 Plugin 'ajh17/vimcompletesme'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-notes'
+Plugin 'tomlion/vim-solidity'
 
 call vundle#end()
-
-filetype plugin indent on
 
 " Mappings
 inoremap jk <ESC>
@@ -79,5 +78,26 @@ set splitright
 colors calmbreeze
 set relativenumber
 
+function! WrapForTmux(s)
+  if !exists('$TMUX')
+    return a:s
+  endif
+
+  let tmux_start = "\<Esc>Ptmux;"
+  let tmux_end = "\<Esc>\\"
+
+  return tmux_start . substitute(a:s, "\<Esc>", "\<Esc>\<Esc>", 'g') . tmux_end
+endfunction
+
+let &t_SI .= WrapForTmux("\<Esc>[?2004h")
+let &t_EI .= WrapForTmux("\<Esc>[?2004l")
+
+function! XTermPasteBegin()
+  set pastetoggle=<Esc>[201~
+  set paste
+  return ""
+endfunction
+
+inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 
 
