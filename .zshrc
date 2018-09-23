@@ -1,6 +1,6 @@
 export ZSH="/nail/home/jatin/.oh-my-zsh"
 
-ZSH_THEME="agnoster"
+ZSH_THEME="jatin"
 bindkey jk vi-cmd-mode
 
 plugins=(
