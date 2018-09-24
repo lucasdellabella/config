@@ -1,4 +1,4 @@
-export ZSH="/nail/home/jatin/.oh-my-zsh"
+export ZSH="$HOME/.oh-my-zsh"
 
 ZSH_THEME="jatin"
 bindkey jk vi-cmd-mode
@@ -49,7 +49,7 @@ dt() {
 
 # cd to a directory 2 levels deep from root
 cdf() {
-    result=$(print -l ~/pg/*/*(/) | fzf)
+    result=$(print -l $HOME/*/*(/) | fzf)
     if [ ! -z "$result" ]; then
         cd $result
     fi
@@ -82,7 +82,7 @@ co() {
 }
 
 # pull feature branch onto this one
-gpf() {
+gpullfeat() {
     if [ ! -z "$1" ]; then
         git pull . "$1"
     else
@@ -94,7 +94,7 @@ gpf() {
 }
 
 # merge feature to master
-gfm() {
+gfeatmaster() {
     branch=$(git branch | grep '^*' | sed 's/* //'  )
     if [ "$branch" != "master" ]; then
         git fetch origin master:master
@@ -106,7 +106,7 @@ gfm() {
 }
 
 # reset to master
-grm() {
+gresetmaster() {
     git fetch
     git reset --hard origin/master
 }
@@ -125,7 +125,7 @@ vd() {
 }
 
 # git diff last n commits (defaults to last commit)
-gdh() {
+gdiffhead() {
     git diff HEAD~${1:-1}
 }
 
@@ -139,3 +139,6 @@ alias st="tmux source-file ~/.tmux.conf"
 alias z="vim ~/.zshrc"
 alias t="vim ~/.tmux.conf"
 alias v="vim ~/.vimrc"
+
+# plugin settings
+bindkey '^ ' autosuggest-accept
