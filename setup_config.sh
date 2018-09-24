@@ -29,7 +29,6 @@ if [[ -z $update ]]; then
     if [ ! -d "~/.vim/bundle/" ]; then
         git clone https://github.com/VundleVim/Vundle.vim.git ~/.vim/bundle/Vundle.vim
     fi
-    vim +PluginInstall +Tmuxline +qall
 
     echo "$(tput setaf 3)Installing zsh dependencies..."; tput sgr0
     if [[ -z $remote ]]; then
@@ -61,11 +60,12 @@ cp jatin.zsh-theme ~/.oh-my-zsh/themes/jatin.zsh-theme
 echo "$(tput setaf 3)Sourcing new configs..."; tput sgr0
 source ~/.bash_profile
 tmux source-file ~/.tmux.conf
+vim +PluginInstall +qall
 if [[ ! $(echo $SHELL) = *"zsh"* ]]; then
     chsh -s /bin/zsh
     exec zsh
 fi
 
-if [[ -z $update ]]; then
-    printf "$(tput setaf 2)Setup completed. To finish:\n 1) Manually apply iterm_colors.json.\n 2) Restart iterm.\n"
+if [[ -z $update && -z $remote ]]; then
+    printf "$(tput setaf 2)Setup completed. To finish:\n 1) Manually apply iterm_colors.json.\n 2) Manually configure fonts/Inconsolata.\n 3) Restart iterm.\n"
 fi

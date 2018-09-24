@@ -33,6 +33,7 @@ Plugin 'danro/rename.vim'
 Plugin 'stephpy/vim-yaml'
 Plugin 'farmergreg/vim-lastplace'
 Plugin 'PeterRincker/vim-argumentative'
+Plugin 'ryanoasis/vim-devicons'
 
 call vundle#end()
 
@@ -272,4 +273,3 @@ nnoremap <silent> <C-x> :bp<CR>
 let g:UltiSnipsExpandTrigger="<tab>"
 let g:UltiSnipsJumpForwardTrigger="<c-b>"
 let g:UltiSnipsJumpBackwardTrigger="<c-z>"
-
