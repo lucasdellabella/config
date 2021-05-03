@@ -1,9 +1,23 @@
 export ZSH="$HOME/.oh-my-zsh"
+export KEYTIMEOUT=20
+alias fzf="fzf --color fg:242,bg:233,hl:65,fg+:15,bg+:234,hl+:108 --color info:108,prompt:109,spinner:108,pointer:168,marker:168"
+alias rb="review-branch"
+alias ag="ag --ignore-dir playground --ignore-dir virtualenv_run --ignore-dir virtualenv_run_py27 --ignore-dir log --ignore-dir node_modules --ignore-dir coverage --ignore-dir logs --ignore-dir venv --ignore-dir tags"
+
+# re-source dots
+alias sz="source ~/.zshrc"
+alias st="tmux source-file ~/.tmux.conf"
+alias z="vim ~/.zshrc"
+alias t="vim ~/.tmux.conf"
+alias v="vim ~/.vimrc"
+
+alias ipython="ipython --TerminalInteractiveShell.editing_mode=vi"
+
 
 ZSH_THEME="jatin"
-bindkey jk vi-cmd-mode
 
 plugins=(
+  vi-mode
   git
   zsh-syntax-highlighting
   warhol
@@ -24,7 +38,10 @@ chpwd() {
 
 # opens file from name in vim regardless of path
  vf() {
-     find . -name "$1" -not -path "./node_modules/*" -exec vim {} +
+     result=$(fzf)
+    if [ ! -z "$result" ]; then
+        vim $result
+    fi
  }
 
 # runs pytests from name regardless of path
@@ -44,12 +61,16 @@ chpwd() {
 
 # unix timestamp conversion
 dt() {
-    date -d "@$1"
+    if [ -z $1 ]; then
+        date '+%s'
+    else
+        date -d "@$1"
+    fi
 }
 
 # cd to a directory 2 levels deep from root
 cdf() {
-    result=$(print -l $HOME/*/*(/) | fzf)
+    result=$(print -l $HOME/DEV/*/*(/) | fzf)
     if [ ! -z "$result" ]; then
         cd $result
     fi
@@ -60,14 +81,6 @@ sr() {
     grep -rl "$1" ./ | xargs sed -i "s/$1/$2/g"
 }
 
-
-# clone a yelp repo
- clone() {
-     result=$(git yelp-list-repos | fzf)
-     if [ ! -z "$result" ]; then
-        git clone $result
-     fi
- }
 
 # checkout branch
 co() {
@@ -105,10 +118,24 @@ gfeatmaster() {
     fi
 }
 
+# rebase on master
+gbasemaster() {
+    branch=$(git branch | grep '^*' | sed 's/* //'  )
+    if [ "$branch" != "master" ]; then
+        git fetch origin master:master
+        git rebase -i origin/master
+    fi
+}
+
 # reset to master
 gresetmaster() {
     git fetch
     git reset --hard origin/master
+}
+
+gresetym() {
+    git fetch
+    git reset --hard canon/master
 }
 
 # cd to git project root
@@ -129,16 +156,20 @@ gdiffhead() {
     git diff HEAD~${1:-1}
 }
 
-
-alias fzf="fzf --color fg:242,bg:233,hl:65,fg+:15,bg+:234,hl+:108 --color info:108,prompt:109,spinner:108,pointer:168,marker:168"
-alias rb="review-branch"
-
-# re-source dots
-alias sz="source ~/.zshrc"
-alias st="tmux source-file ~/.tmux.conf"
-alias z="vim ~/.zshrc"
-alias t="vim ~/.tmux.conf"
-alias v="vim ~/.vimrc"
+export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 
 # plugin settings
 bindkey '^ ' autosuggest-accept
+bindkey '^T' forward-word
+bindkey jk vi-cmd-mode
+
+# Fix issues with vi-mode plugin and reverse searching T_T
+if [[ "${terminfo[kcuu1]}" != "" ]]; then
+  autoload -U up-line-or-beginning-search
+  zle -N up-line-or-beginning-search
+  bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search
+fi
+
+bindkey '^[[A' up-line-or-search
+bindkey '^[[B' down-line-or-search
+

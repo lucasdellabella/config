@@ -1,3 +1,4 @@
+set nocompatible
 set encoding=utf-8
 syntax on
 filetype plugin indent on
@@ -10,30 +11,31 @@ Plugin 'kien/ctrlp.vim'
 Plugin 'tpope/vim-surround'
 Plugin 'dhruvasagar/vim-table-mode'
 Plugin 'scrooloose/nerdtree'
-Plugin 'scrooloose/syntastic'
-Plugin 'pangloss/vim-javascript'
-Plugin 'mxw/vim-jsx'
 Plugin 'mru.vim'
 Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'kchmck/vim-coffee-script'
 Plugin 'lervag/vimtex'
 Plugin 'easymotion/vim-easymotion'
 Plugin 'edkolev/tmuxline.vim'
 Plugin 'ntpeters/vim-better-whitespace'
-Plugin 'ajh17/vimcompletesme'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-notes'
 Plugin 'dmdque/solidity.vim'
 Plugin 'itchyny/lightline.vim'
 Plugin 'tpope/vim-fugitive'
-Plugin 'prettier/vim-prettier'
 Plugin 'rking/ag.vim'
-Plugin 'tmhedberg/simpylfold'
+Plugin 'konfekt/fastfold'
 Plugin 'elzr/vim-json'
 Plugin 'danro/rename.vim'
 Plugin 'stephpy/vim-yaml'
 Plugin 'farmergreg/vim-lastplace'
 Plugin 'PeterRincker/vim-argumentative'
 Plugin 'ryanoasis/vim-devicons'
+Plugin 'vim-scripts/indentpython.vim'
+Plugin 'gavocanov/vim-js-indent'
+Plugin 'roxma/nvim-yarp'
+Plugin 'roxma/vim-hug-neovim-rpc'
+Plugin 'neoclide/coc.nvim'
 
 call vundle#end()
 
@@ -46,21 +48,27 @@ hi CursorLineNr ctermbg=None ctermfg=cyan
 hi CursorLine ctermbg=Yellow ctermfg=cyan
 hi IncSearch ctermbg=Yellow cterm=None ctermfg=Black
 hi Search ctermbg=Yellow cterm=None ctermfg=Black
-hi SpellBad ctermbg=blue ctermfg=Black
-hi SignColumn ctermbg=blue ctermfg=Black
-hi SyntasticWarningSign ctermbg=blue ctermfg=Black
-hi SyntasticErrorSign ctermbg=blue ctermfg=Black
+hi SpellBad ctermbg=DarkGray ctermfg=Black
+hi SignColumn ctermbg=Black ctermfg=Black
+hi QuickFixLine ctermbg=blue ctermfg=Black
+hi Pmenu ctermbg=darkgray ctermfg=lightgray
+hi PmenuSel ctermbg=lightgray ctermfg=darkgray
+hi CocFloat ctermbg=darkgray ctermfg=lightgray
+hi CocErrorFloat ctermbg=darkgray ctermfg=lightgray
+hi CocInfoFloat ctermbg=darkgray ctermfg=lightgray
+hi CocWarningFloat ctermbg=darkgray ctermfg=lightgray
+hi CocHighlightText ctermbg=darkgray ctermfg=lightgray
 
 
 " Mappings
 inoremap jk <ESC>
-let mapleader = "\<Space>"
 :imap <D-v> ^O:set paste<Enter>^R+^O:set nopaste<Enter>
 
 " Text settings
 set nowrap
 set shiftwidth=4
 set tabstop=4
+set softtabstop=0
 set backspace=indent,eol,start
 set autoindent
 set copyindent
@@ -85,11 +93,78 @@ autocmd BufWritePre * StripWhitespace
 set nobackup
 set noswapfile
 
-" Syntastic settings
-let g:syntastic_always_populate_loc_list = 1
-set statusline+=%#warningmsg#
-set statusline+=%{SyntasticStatuslineFlag()}
-nnoremap <silent> <C-c> :Error<CR>
+" Autocomplete with coc
+let g:coc_global_extensions = [
+  \ 'coc-snippets',
+  \ 'coc-ultisnips',
+  \ 'coc-pairs',
+  \ 'coc-tsserver',
+  \ 'coc-eslint',
+  \ 'coc-prettier',
+  \ 'coc-json',
+  \ 'coc-python',
+  \ ]
+
+set hidden
+set updatetime=300
+set signcolumn=yes
+
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+
+" Use <c-space> to trigger completion.
+inoremap <silent><expr> <Nul> coc#refresh()
+
+command! -nargs=0 Prettier :CocCommand prettier.formatFile
+
+" Remap for rename current word
+nmap <C-f> <Plug>(coc-rename)
+
+" Use <cr> to confirm completion, `<C-g>u` means break undo chain at current position.
+" Coc only does snippet and additional edit on confirm.
+inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+" Or use `complete_info` if your vim support it, like:
+" inoremap <expr> <cr> complete_info()["selected"] != "-1" ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Use `[g` and `]g` to navigate diagnostics
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+
+" Remap keys for gotos
+" nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
+
+" Highlight symbol under cursor on CursorHold
+autocmd CursorHold * silent call CocActionAsync('highlight')
+
+set statusline^=%{coc#status()}%{get(b:,'coc_current_function','')}
+
+augroup mygroup
+  autocmd!
+  " Setup formatexpr specified filetype(s).
+  autocmd FileType typescript,json setl formatexpr=CocAction('formatSelected')
+  " Update signature help on jump placeholder
+  autocmd User CocJumpPlaceholder call CocActionAsync('showSignatureHelp')
+augroup end
 
 " Airline settings
 let g:airline_powerline_fonts = 1
@@ -141,22 +216,7 @@ let g:tmuxline_preset = {
 
 " NERDTree settings
 map <C-n> :NERDTreeToggle<CR> " Map ctrl-n to NERDTree
-let g:NERDTreeHijackNetrw=0
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-function! NERDTreeHighlightFile(extension, fg, bg, guifg, guibg)
- exec 'autocmd filetype nerdtree highlight ' . a:extension .' ctermbg='. a:bg .' ctermfg='. a:fg .' guibg='. a:guibg .' guifg='. a:guifg
- exec 'autocmd filetype nerdtree syn match ' . a:extension .' #^\s\+.*'. a:extension .'$#'
-endfunction
-
-call NERDTreeHighlightFile('ini', 'green', 'none', 'green', '#151515')
-call NERDTreeHighlightFile('md', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('yml', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('config', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('conf', 'yellow', 'none', 'yellow', '#151515')
-call NERDTreeHighlightFile('json', 'gray', 'none', 'gray', '#151515')
-call NERDTreeHighlightFile('html', 'gray', 'none', 'gray', '#151515')
-call NERDTreeHighlightFile('py', 'cyan', 'none', 'cyan', '#151515')
-call NERDTreeHighlightFile('js', 'cyan', 'none', 'cyan', '#151515')
 
 " ctrlp settings
 let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
@@ -170,7 +230,7 @@ set splitright
 set relativenumber
 
 " Mark json files as type json -.-
-au BufRead,BufNewFile *.json set filetype=json
+au BufRead,BufNewFile *.json* set filetype=json
 
 " No more :set paste/:set nopaste!
 function! WrapForTmux(s)
@@ -251,25 +311,29 @@ endfunction
 let g:SimpylFold_docstring_preview = 0
 set foldlevelstart=1
 
+" move between vim splits
+nnoremap <C-J> <C-W>j
+nnoremap <C-K> <C-W>k
+nnoremap <C-L> <C-W>l
+nnoremap <C-H> <C-W>h
+
 " resize vim splits
 nnoremap <C-W>h :call TmuxResize('h', 10)<CR>
 nnoremap <C-W>j :call TmuxResize('j', 10)<CR>
 nnoremap <C-W>k :call TmuxResize('k', 10)<CR>
 nnoremap <C-W>l :call TmuxResize('l', 10)<CR>
 
-" move between vim splits
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-
 " Ag settings
 nmap <C-s> :Ag "def <cword>" . <CR>
 
 " Buffer settings
+command Bd bp\|bd \#
 nnoremap <silent> <C-z> :bn<CR>
 nnoremap <silent> <C-x> :bp<CR>
 
-let g:UltiSnipsExpandTrigger="<tab>"
-let g:UltiSnipsJumpForwardTrigger="<c-b>"
-let g:UltiSnipsJumpBackwardTrigger="<c-z>"
+
+" reload vimrc
+augroup myvimrc
+    au!
+    au BufWritePost .vimrc,_vimrc,vimrc,.gvimrc,_gvimrc,gvimrc so $MYVIMRC | if has('gui_running') | so $MYGVIMRC | endif
+augroup END
