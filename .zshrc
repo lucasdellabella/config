@@ -83,9 +83,9 @@ sr() {
 }
 
 
-# clone a yelp repo
+# clone a repo
  clone() {
-     result=$(git yelp-list-repos | fzf)
+     result=$(git list-repos | fzf)
      if [ ! -z "$result" ]; then
         git clone $result
      fi
@@ -142,11 +142,6 @@ gresetmaster() {
     git reset --hard origin/master
 }
 
-gresetym() {
-    git fetch
-    git reset --hard canon/master
-}
-
 # cd to git project root
 cdr() {
     cd "$(git rev-parse --show-toplevel)"
@@ -163,10 +158,6 @@ vd() {
 # git diff last n commits (defaults to last commit)
 gdiffhead() {
     git diff HEAD~${1:-1}
-}
-
-scribe-prod () {
-    parallel -i sh -c "scribereader -s {} -f $1" -- "norcal-prod" "nova-prod" "pnw-prod"
 }
 
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
