@@ -1,8 +1,9 @@
 export ZSH="$HOME/.oh-my-zsh"
 export KEYTIMEOUT=20
 alias fzf="fzf --color fg:242,bg:233,hl:65,fg+:15,bg+:234,hl+:108 --color info:108,prompt:109,spinner:108,pointer:168,marker:168"
+alias vim="nvim"
 alias rb="review-branch"
-alias ag="ag --ignore-dir playground --ignore-dir virtualenv_run --ignore-dir virtualenv_run_py27 --ignore-dir log --ignore-dir node_modules --ignore-dir coverage --ignore-dir logs --ignore-dir venv --ignore-dir tags"
+alias ag="ag --ignore-dir playground --ignore-dir virtualenv_run --ignore-dir virtualenv_run_py27 --ignore-dir log --ignore-dir node_modules --ignore-dir coverage --ignore-dir logs --ignore-dir venv  --ignore-dir virtualenv_py3  --ignore-dir docker-venv-py3"
 
 # re-source dots
 alias sz="source ~/.zshrc"
@@ -70,7 +71,7 @@ dt() {
 
 # cd to a directory 2 levels deep from root
 cdf() {
-    result=$(print -l $HOME/DEV/*/*(/) | fzf)
+    result=$(print -l $HOME/pg/*/*(/) | fzf)
     if [ ! -z "$result" ]; then
         cd $result
     fi
@@ -81,6 +82,14 @@ sr() {
     grep -rl "$1" ./ | xargs sed -i "s/$1/$2/g"
 }
 
+
+# clone a yelp repo
+ clone() {
+     result=$(git yelp-list-repos | fzf)
+     if [ ! -z "$result" ]; then
+        git clone $result
+     fi
+ }
 
 # checkout branch
 co() {
@@ -156,6 +165,10 @@ gdiffhead() {
     git diff HEAD~${1:-1}
 }
 
+scribe-prod () {
+    parallel -i sh -c "scribereader -s {} -f $1" -- "norcal-prod" "nova-prod" "pnw-prod"
+}
+
 export FZF_DEFAULT_COMMAND='ag --hidden --ignore .git -g ""'
 
 # plugin settings
@@ -169,7 +182,9 @@ if [[ "${terminfo[kcuu1]}" != "" ]]; then
   zle -N up-line-or-beginning-search
   bindkey "${terminfo[kcuu1]}" up-line-or-beginning-search
 fi
-
-bindkey '^[[A' up-line-or-search
-bindkey '^[[B' down-line-or-search
-
+# start typing + [Down-Arrow] - fuzzy find history backward
+if [[ "${terminfo[kcud1]}" != "" ]]; then
+  autoload -U down-line-or-beginning-search
+  zle -N down-line-or-beginning-search
+  bindkey "${terminfo[kcud1]}" down-line-or-beginning-search
+fi

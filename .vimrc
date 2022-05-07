@@ -95,15 +95,10 @@ set noswapfile
 
 " Autocomplete with coc
 let g:coc_global_extensions = [
-  \ 'coc-snippets',
-  \ 'coc-ultisnips',
   \ 'coc-pairs',
-  \ 'coc-tsserver',
-  \ 'coc-eslint',
-  \ 'coc-prettier',
-  \ 'coc-json',
   \ 'coc-python',
   \ ]
+let g:coc_disable_startup_warning = 1
 
 set hidden
 set updatetime=300
@@ -139,7 +134,7 @@ nmap <silent> [g <Plug>(coc-diagnostic-prev)
 nmap <silent> ]g <Plug>(coc-diagnostic-next)
 
 " Remap keys for gotos
-" nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gr <Plug>(coc-references)
 
 " Use K to show documentation in preview window
@@ -330,6 +325,9 @@ nmap <C-s> :Ag "def <cword>" . <CR>
 command Bd bp\|bd \#
 nnoremap <silent> <C-z> :bn<CR>
 nnoremap <silent> <C-x> :bp<CR>
+
+nnoremap <C-,> :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%<' . line('.') . 'l\S', 'be')<CR>
+nnoremap <C-.> :call search('^'. matchstr(getline('.'), '\(^\s*\)') .'\%>' . line('.') . 'l\S', 'e')<CR>
 
 
 " reload vimrc

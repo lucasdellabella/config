@@ -59,14 +59,6 @@ shorten_git() {
 }
 
 
-# Echo JIRA link of current branch's ticket
-jira() {
-    branch="$vcs_info_msg_0_"
-    issue=$(echo $branch | cut -d'_' -f-1)
-    echo "https://jira.yelpcorp.com/browse/$issue"
-}
-
-
 # Git prompt
 prompt_git() {
     local color ref status ret
@@ -116,6 +108,7 @@ prompt_virtualenv() {
   fi
 }
 
+
 prompt_rb_main() {
   RETVAL=$?
   CURRENT_BG='NONE'
@@ -124,6 +117,7 @@ prompt_rb_main() {
   prompt_git
   prompt_end
 }
+
 
 prompt_rb_precmd() {
   vcs_info
