@@ -21,7 +21,6 @@ plugins=(
   vi-mode
   git
   zsh-syntax-highlighting
-  warhol
   zsh-autosuggestions
   extract
 )
@@ -71,7 +70,7 @@ dt() {
 
 # cd to a directory 2 levels deep from root
 cdf() {
-    result=$(print -l $HOME/pg/*/*(/) | fzf)
+    result=$(print -l $HOME/*(/) | fzf)
     if [ ! -z "$result" ]; then
         cd $result
     fi

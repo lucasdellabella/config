@@ -10,6 +10,9 @@ if [[ -z $update ]]; then
     if [[ -z $remote ]]; then
         brew list the_silver_searcher || brew install the_silver_searcher
         brew list fzf || brew install fzf
+        brew list node || brew install node
+        brew list neovim || brew install neovim
+        brew list yarn || brew install yarn
     fi
 
     echo "$(tput setaf 3)Installing tmux dependencies..."; tput sgr0
@@ -46,12 +49,14 @@ if [[ -z $update ]]; then
 
     fi
     mkdir -p ~/.oh-my-zsh/themes
+    mkdir -p ~/.config/nvim
 fi
 
 
 echo "$(tput setaf 3)Replacing existing config files..."; tput sgr0
 cp .tmux.conf ~/.tmux.conf
 cp .vimrc ~/.vimrc
+cp init.vim ~/.config/nvim/init.vim
 cp .zshrc ~/.zshrc
 cp .bash_profile ~/.bash_profile
 cp jatin.zsh-theme ~/.oh-my-zsh/themes/jatin.zsh-theme
@@ -61,6 +66,7 @@ echo "$(tput setaf 3)Sourcing new configs..."; tput sgr0
 source ~/.bash_profile
 tmux source-file ~/.tmux.conf
 vim +PluginInstall +qall
+(cd ~/.vim/bundle/coc.nvim/ && yarn install)
 if [[ ! $(echo $SHELL) = *"zsh"* ]]; then
     chsh -s /bin/zsh
     exec zsh
