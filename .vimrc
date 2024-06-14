@@ -39,7 +39,7 @@ Plugin 'neoclide/coc.nvim'
 
 call vundle#end()
 
-colorscheme base16-default-dark
+colorscheme zenburn
 
 " Changing colors I don't like
 hi LineNr term=bold cterm=None ctermfg=DarkGrey ctermbg=None
@@ -166,7 +166,7 @@ let g:airline_powerline_fonts = 1
 let g:tmuxline_powerline_separators = 1
 
 let g:lightline = {
-  \   'colorscheme': 'seoul256',
+  \   'colorscheme': 'one',
   \   'active': {
   \     'left':[ [ 'mode', 'paste' ],
   \              [ 'readonly', 'filename', 'modified']
