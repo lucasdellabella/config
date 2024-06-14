@@ -27,6 +27,7 @@ if [[ -z $update ]]; then
     if [ ! -d "~/.vim/colors/base16" ]; then
         git clone git://github.com/chriskempson/base16-vim.git ~/.vim/colors/base16
         cp ~/.vim/colors/base16/colors/*.vim ~/.vim/colors/
+        cp ./zenburn.vim ~/.vim/colors/
     fi
 
     if [ ! -d "~/.vim/bundle/" ]; then
