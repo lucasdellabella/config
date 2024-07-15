@@ -13,6 +13,7 @@ if [[ -z $update ]]; then
         brew list node || brew install node
         brew list neovim || brew install neovim
         brew list yarn || brew install yarn
+        brew list lazygit || install jesseduffield/lazygit/lazygit
     fi
 
     echo "$(tput setaf 3)Installing tmux dependencies..."; tput sgr0
