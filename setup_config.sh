@@ -75,5 +75,5 @@ if [[ ! $(echo $SHELL) = *"zsh"* ]]; then
 fi
 
 if [[ -z $update && -z $remote ]]; then
-    printf "$(tput setaf 2)Setup completed. To finish:\n 1) Manually apply iterm_colors.json.\n 2) Manually configure fonts/Inconsolata.\n 3) Restart iterm.\n"
+    printf "$(tput setaf 2)Setup completed. To finish:\n 1) Manually apply iterm_colors.json. (Settings > Profile > Colors)\n 2) Manually configure fonts/Inconsolata. (Open 'Font Book' and add your font, Settings > Profile > Text) \n 3) Restart iterm.\n"
 fi
